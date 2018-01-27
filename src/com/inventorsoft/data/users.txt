@@ -1,0 +1,1 @@
+Sergey,qwerty,10.0,false;
