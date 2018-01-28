@@ -1,6 +1,6 @@
 package com.inventorsoft;
 
-import com.inventorsoft.Exception.UserAlreadyExistsException;
+import com.inventorsoft.Exception.DataAlreadyExistsException;
 import com.inventorsoft.Exception.WrongLoginPasswordException;
 import com.inventorsoft.Model.User;
 
@@ -17,12 +17,12 @@ public class UserAuthentication  {
         return true;
     }
 
-    public boolean isRegistrationSuccessful(User user, List<User> list) throws UserAlreadyExistsException {
+    public boolean isRegistrationSuccessful(User user, List<User> list) throws DataAlreadyExistsException {
 
         Boolean isSuccess = list.stream().anyMatch(o -> o.getLogin().
                 equals(user.getLogin()) && o.getPassword().equals(user.getPassword()));
         if (isSuccess){
-            throw new UserAlreadyExistsException("User already exists");
+            throw new DataAlreadyExistsException("User already exists");
         } else {
             return true;
         }

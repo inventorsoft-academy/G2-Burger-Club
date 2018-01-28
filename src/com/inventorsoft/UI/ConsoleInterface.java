@@ -13,8 +13,8 @@ public class ConsoleInterface {
 
     public ConsoleInterface() {
 
-        int role = askUserChoice("1 - CUSTOMER | 2 - FAST FOOD inventorsoft");
-        if (authorization(role)) { //            AUTHORIZATION OFF
+        int role = askUserChoice("1 - CUSTOMER | 2 - FAST FOOD company");
+        if (authorization(role)) {
             showMainChooseMenu(role);
         }
     }
@@ -46,7 +46,7 @@ public class ConsoleInterface {
         }
         try {
             uc.login(login,pass,isAdmin);
-        } catch (UserAlreadyExistsException | EmptyDataException | ContainsIllegalCharactersException | WrongDataSizeException | WrongLoginPasswordException e) {
+        } catch (DataAlreadyExistsException | EmptyDataException | ContainsIllegalCharactersException | WrongDataSizeException | WrongLoginPasswordException e) {
             System.out.println(e.getMessage());
             login(role);
         }
@@ -64,7 +64,7 @@ public class ConsoleInterface {
         }
         try {
             uc.registration(login,pass,isAdmin);
-        } catch (WrongDataSizeException | EmptyDataException | UserAlreadyExistsException | ContainsIllegalCharactersException e) {
+        } catch (WrongDataSizeException | EmptyDataException | DataAlreadyExistsException | ContainsIllegalCharactersException e) {
             System.out.println(e.getMessage());
             registration(role);
         }
@@ -106,15 +106,41 @@ public class ConsoleInterface {
     private int askUserChoice(String text){
         int i = 0;
         Scanner scan = new Scanner(System.in);
-        System.out.println("---------------------------------------------------");
         System.out.println(text);
         try {
             i = scan.nextInt();
         } catch (Exception e){
-            System.out.println("Enter correct values!");
+            System.out.println("Enter correct value!");
             askUserChoice(text);
         }
          return i;
+    }
+
+    private int askUserChoiceInt(String text){
+        int i = 0;
+        Scanner scan = new Scanner(System.in);
+        System.out.print(text);
+        try {
+            i = scan.nextInt();
+        } catch (Exception e){
+            System.out.println("Enter correct value!");
+            askUserChoiceInt(text);
+        }
+        return i;
+    }
+
+    private double askUserChoiceDouble(String text){
+        double i = 0.0;
+        Scanner scan = new Scanner(System.in);
+        scan.useLocale(Locale.US);
+        System.out.print(text);
+        try {
+            i = scan.nextDouble();
+        } catch (Exception e){
+            System.out.println("Enter correct value!");
+            askUserChoice(text);
+        }
+        return i;
     }
 
     private void showBurgers(){
@@ -166,7 +192,16 @@ public class ConsoleInterface {
     }
 
     private void addIngredient(){
-        new IngredientController().addIngredient(askUserData("Ingredient name: "));
+        IngredientController ic = new IngredientController();
+        String ingrName = askUserData("Ingredient name: ");
+        double ingrPrice = askUserChoiceDouble("Ingredient price: ");
+        int ingrAmount = askUserChoiceInt("Ingredient amount: ");
+        try {
+            ic.addIngredient(ingrName,ingrPrice,ingrAmount);
+        } catch (WrongDataSizeException | EmptyDataException | ContainsIllegalCharactersException | IllegalArgumentException | DataAlreadyExistsException e) {
+            System.out.println(e.getMessage());
+            addIngredient();
+        }
     }
 
     private String getNameBurgerById() {

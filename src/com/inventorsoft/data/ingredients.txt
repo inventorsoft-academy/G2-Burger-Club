@@ -1,14 +1,1 @@
-tomato
-meat
-beef
-onion
-beef
-potatoes
-pepper
-mayonnaise
-ketchup
-sauce
-cheese
-mushroom
-garlic
-ogurec
+sausage,2.9,8;egg,1.6,10;onion,0.2,13;tomato,0.8,5;

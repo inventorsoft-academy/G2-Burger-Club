@@ -1,35 +1,41 @@
 package com.inventorsoft.Controller;
 
 import com.inventorsoft.DataStorage;
+import com.inventorsoft.DataVerification;
+import com.inventorsoft.Exception.*;
 import com.inventorsoft.Model.Ingredient;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class IngredientController {
 
-    public IngredientController() {
+    private List<Ingredient> ingredients = new ArrayList<>();
+    private DataVerification dv = new DataVerification();
 
+    private void updateData(){
+        ingredients = new DataStorage().getIngredientsFromFile();
     }
 
-    public void addIngredient(String ingredient){
-        try {
-            new DataStorage().saveIngredientToFile(new Ingredient(ingredient));
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void saveData(){
+        new DataStorage().saveIngredientsToFile(ingredients);
+    }
+
+    public void addIngredient(String ingrName, double ingrPrice, int ingrAmount) throws WrongDataSizeException, EmptyDataException, ContainsIllegalCharactersException, DataAlreadyExistsException {
+        updateData();
+        Ingredient ingredient = new Ingredient(dv.verifyData(ingrName),ingrPrice,ingrAmount);
+        if (dv.matchCheck(ingredient,ingredients)){
+            ingredients.add(ingredient);
         }
+        saveData();
+
     }
 
     public List<String> getIngredients(){
+        updateData();
         List<String> ingredientsList = new ArrayList<>();
-        try {
-            List<Ingredient> ingredients = new DataStorage().getIngredientsFromFile();
-            for (Ingredient ingredient: ingredients) {
-                ingredientsList.add(ingredient.getIngredientName());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (Ingredient ingredient: ingredients) {
+            ingredientsList.add(ingredient.getIngredientName());
         }
         return ingredientsList;
     }
