@@ -16,11 +16,11 @@ public class UserController {
 
     private void updateData(){
         list = DataStorage.getAllUsers();
+
     }
     private void saveData(){
         DataStorage.saveUserToFile2(list);
     }
-
 
 
     public boolean login(String login, String password, boolean isAdmin) throws UserAlreadyExistsException, WrongDataSizeException, EmptyDataException, ContainsIllegalCharactersException, WrongLoginPasswordException {

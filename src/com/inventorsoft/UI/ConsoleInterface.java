@@ -1,4 +1,4 @@
-package com.inventorsoft;
+package com.inventorsoft.UI;
 
 import com.inventorsoft.Controller.BurgerController;
 import com.inventorsoft.Controller.IngredientController;

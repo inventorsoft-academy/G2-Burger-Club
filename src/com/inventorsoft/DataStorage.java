@@ -183,14 +183,12 @@ public class DataStorage {
         File file = new File(USERS_FILE_PATH,"/users.txt");
 
 
-            try( FileWriter fileWriter = new FileWriter(file, true);
+            try( FileWriter fileWriter = new FileWriter(file, false);
             BufferedWriter bw = new BufferedWriter(fileWriter);
 
             PrintWriter pw = new PrintWriter(bw)){
-                System.out.println("pw"+list.get(0).getPassword());
                 for (User user:list) {
                     pw.print(user.getLogin() + ",");
-                    System.out.println(user.getLogin());
                     pw.print(user.getPassword() + ",");
                     pw.print(user.getMoney() + ",");
                     pw.print(String.valueOf(user.isAdmin()) + ";");

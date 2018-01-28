@@ -1,1 +1,1 @@
-Sergey,qwerty,10.0,false;
+Sergey,qwerty,10.0,false;anton123,123456,10.0,false;trueadmin,qwerty,10.0,true;anton,qwerty,10.0,false;user,qwerty,10.0,false;

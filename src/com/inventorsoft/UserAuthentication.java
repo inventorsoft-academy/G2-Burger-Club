@@ -10,7 +10,7 @@ public class UserAuthentication  {
 
     public boolean isLoginSuccessful(User user, List<User> list) throws WrongLoginPasswordException {
         Boolean isSuccess = list.stream().anyMatch(o -> o.getLogin().
-                equals(user.getLogin()) && o.getPassword().equals(user.getPassword()));
+                equals(user.getLogin()) && o.getPassword().equals(user.getPassword()) && o.isAdmin() == user.isAdmin());
         if (!isSuccess){
             throw new WrongLoginPasswordException("Wrong login or password");
         }
