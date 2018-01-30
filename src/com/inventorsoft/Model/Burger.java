@@ -2,24 +2,56 @@ package com.inventorsoft.Model;
 
 import java.util.List;
 
-/**
- * Created by Sergey on 17.01.2018.
- */
 public class Burger {
 
     private String name;
     private double price;
+    private boolean isAvailable;
+    private String creator;
+    private int ordersNumber;
     private List<Ingredient> ingredient;
 
-    public Burger(String name, double price, List<Ingredient> ingredient) {
+    public Burger(String name, String creator, int ordersNumber, List<Ingredient> ingredient, boolean isAvailable) {
         this.name = name;
-        this.price = price;
+        this.isAvailable = isAvailable;
+        this.creator = creator;
+        this.ordersNumber = ordersNumber;
         this.ingredient = ingredient;
     }
 
-    public Burger(String name, double price) {
+    public Burger(String name, String creator, double price, int ordersNumber, List<Ingredient> ingredient,boolean isAvailable) {
         this.name = name;
         this.price = price;
+        this.isAvailable = isAvailable;
+        this.creator = creator;
+        this.ordersNumber = ordersNumber;
+        this.ingredient = ingredient;
+
+    }
+
+
+    public int getOrdersNumber() {
+        return ordersNumber;
+    }
+
+    public void setOrdersNumber(int ordersNumber) {
+        this.ordersNumber = ordersNumber;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     public double getPrice() {
@@ -51,7 +83,8 @@ public class Burger {
     public String toString() {
         return "Burger{" +
                 "name='" + name + '\'' +
-                ", price=" + price +
+                ", isAvailable=" + isAvailable +
+                ", creator=" + creator +
                 ", ingredient=" + ingredient +
                 '}';
     }

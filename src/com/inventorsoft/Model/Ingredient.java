@@ -5,6 +5,8 @@ public class Ingredient {
     public Ingredient() {
     }
 
+
+
     public Ingredient(String ingredientName, double price, int amount) {
         this.ingredientName = ingredientName;
         this.price = price;
@@ -41,5 +43,14 @@ public class Ingredient {
 
     public String getIngredientName() {
         return ingredientName;
+    }
+
+    @Override
+    public String toString() {
+        return "Ingredient{" +
+                "ingredientName='" + ingredientName + '\'' +
+                ", price=" + price +
+                ", amount=" + amount +
+                '}';
     }
 }

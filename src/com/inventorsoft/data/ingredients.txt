@@ -1,1 +1,1 @@
-sausage,2.9,8;egg,1.6,10;onion,0.2,13;tomato,0.8,5;
+sausage,2.9,1;egg,1.6,19;onion,0.2,12;tomato,0.8,4;cheese,1.4,5;buns,0.5,15;

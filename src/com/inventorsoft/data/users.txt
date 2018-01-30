@@ -1,1 +1,1 @@
-Sergey,qwerty,10.0,false;anton123,123456,10.0,false;trueadmin,qwerty,10.0,true;anton,qwerty,10.0,false;user,qwerty,10.0,false;
+trueadmin,qwerty,51.13,25,true;Sergey,qwerty,61.99999999999998,25,false;andrew,123456,8.4,25,false;shameless,123456,10.0,25,false;

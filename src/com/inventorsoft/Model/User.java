@@ -5,12 +5,14 @@ public class User {
     private String login;
     private String password;
     private double money;
+    private int commissions;
     private boolean isAdmin;
 
-    public User(String login, String password, double money, boolean isAdmin) {
+    public User(String login, String password, double money, int commissions, boolean isAdmin) {
         this.login = login;
         this.password = password;
         this.money = money;
+        this.commissions = commissions;
         this.isAdmin = isAdmin;
     }
 
@@ -18,6 +20,14 @@ public class User {
         this.login = login;
         this.password = password;
         this.isAdmin = isAdmin;
+    }
+
+    public int getCommissions() {
+        return commissions;
+    }
+
+    public void setCommissions(int commissions) {
+        this.commissions = commissions;
     }
 
     public String getLogin() {

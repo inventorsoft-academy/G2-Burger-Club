@@ -1,4 +1,4 @@
-package com.inventorsoft;
+package com.inventorsoft.Verification;
 
 import com.inventorsoft.Exception.DataAlreadyExistsException;
 import com.inventorsoft.Exception.WrongLoginPasswordException;

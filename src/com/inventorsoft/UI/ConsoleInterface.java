@@ -11,19 +11,25 @@ public class ConsoleInterface {
 
     private String currentUser;
 
+    public String getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(String currentUser) {
+        this.currentUser = currentUser;
+    }
+
     public ConsoleInterface() {
 
-        int role = askUserChoice("1 - CUSTOMER | 2 - FAST FOOD company");
+        int role = askUserChoiceBetweenTwoNumbers("1 - CUSTOMER | 2 - FAST FOOD company");
         if (authorization(role)) {
-            showMainChooseMenu(role);
+                showMainChooseMenu(role);
         }
     }
 
     private boolean authorization(int role){
         boolean success = true;
-        Scanner scan = new Scanner(System.in);
-        System.out.println("1 - LOGIN | 2 - REGISTRATION");
-        int num = scan.nextInt();
+        int num = askUserChoiceBetweenTwoNumbers("1 - LOGIN | 2 - REGISTRATION");
         switch (num){
             case 1:
                 success = login(role);
@@ -31,10 +37,12 @@ public class ConsoleInterface {
             case 2:
                 success = registration(role);
                 break;
+            default:
+                System.out.println("ERROR: Not Allowed");
+                break;
         }
         return success;
     }
-
 
     private boolean login(int role){
         boolean isAdmin = false;
@@ -46,11 +54,11 @@ public class ConsoleInterface {
         }
         try {
             uc.login(login,pass,isAdmin);
+            setCurrentUser(login);
         } catch (DataAlreadyExistsException | EmptyDataException | ContainsIllegalCharactersException | WrongDataSizeException | WrongLoginPasswordException e) {
             System.out.println(e.getMessage());
             login(role);
         }
-        currentUser = login;
         return true;
     }
 
@@ -64,11 +72,11 @@ public class ConsoleInterface {
         }
         try {
             uc.registration(login,pass,isAdmin);
+            setCurrentUser(login);
         } catch (WrongDataSizeException | EmptyDataException | DataAlreadyExistsException | ContainsIllegalCharactersException e) {
             System.out.println(e.getMessage());
             registration(role);
         }
-        currentUser = login;
         return true;
     }
 
@@ -79,7 +87,7 @@ public class ConsoleInterface {
             text = scan.nextLine();
         } catch (Exception e){
             System.out.println("Enter correct values!");
-            askUserChoice(askUserData(text));
+            askUserData(askUserData(text));
         }
         return text;
     }
@@ -89,13 +97,13 @@ public class ConsoleInterface {
         case 1:
             do {
                 chooseActionClientMenu();
-                number = askUserChoice("Enter '0' if you want continue, any another number to finish");
+                number = askUserMenuChoice("Enter '0' if you want continue, any another number to finish");
             } while(number == 0);
             break;
         case 2:
             do {
                 chooseActionAdminMenu();
-                number = askUserChoice("Enter '0' if you want continue, any another number to finish");
+                number = askUserMenuChoice("Enter '0' if you want continue, any another number to finish");
             } while(number == 0);
             break;
         default:
@@ -103,23 +111,41 @@ public class ConsoleInterface {
         }
     }
 
-    private int askUserChoice(String text){
-        int i = 0;
-        Scanner scan = new Scanner(System.in);
-        System.out.println(text);
-        try {
-            i = scan.nextInt();
-        } catch (Exception e){
-            System.out.println("Enter correct value!");
-            askUserChoice(text);
-        }
-         return i;
+    private int askUserChoiceBetweenTwoNumbers(String text){
+        int i = 1;
+
+            Scanner scan = new Scanner(System.in);
+            System.out.println(text);
+            try {
+                i = scan.nextInt();
+            } catch (InputMismatchException e){
+                System.out.println("Enter correct value!");
+                askUserChoiceBetweenTwoNumbers(text);
+            }
+            if (i == 2){
+                return 2;
+            } else {
+                return 1;
+            }
     }
 
     private int askUserChoiceInt(String text){
         int i = 0;
         Scanner scan = new Scanner(System.in);
         System.out.print(text);
+        try {
+            i = scan.nextInt();
+        } catch (Exception e){
+            System.out.println("Enter correct value!");
+            askUserChoiceInt(text);
+        }
+        return i;
+    }
+
+    private int askUserMenuChoice(String text){
+        int i = 0;
+        Scanner scan = new Scanner(System.in);
+        System.out.println(text);
         try {
             i = scan.nextInt();
         } catch (Exception e){
@@ -138,20 +164,32 @@ public class ConsoleInterface {
             i = scan.nextDouble();
         } catch (Exception e){
             System.out.println("Enter correct value!");
-            askUserChoice(text);
+            askUserChoiceDouble(text);
         }
         return i;
     }
 
-    private void showBurgers(){
-        List<String> list = new BurgerController().getBurgersList();
-        for (String str: list) {
-            System.out.println(str);
+    private void showAvailableBurgers(){
+        try {
+            List<String> list = new BurgerController().getAvailableBurgersList();
+            for (String text: list) {
+                System.out.println(text);
+            }
+        } catch (EmptyDataException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    private void showCreatedBurgers(){
+        List<String> list = new BurgerController().getFullBurgersListForCustomer();
+        for (String text: list) {
+            System.out.println(text);
         }
     }
 
     private void showIngredients(){
-        List<String> list = new IngredientController().getIngredients();
+        List<String> list = new IngredientController().getIngredientsForCustomer();
         int i = 1;
         for (String str:list) {
             System.out.print(i+": "+str+" ");
@@ -173,26 +211,51 @@ public class ConsoleInterface {
         String burgerName = scan.nextLine();
         System.out.println("Choose ingredient");
         List<String> ingredients = new ArrayList<>();
+        ingredients.add("buns");
         do {
             showIngredients();
             number = scan.nextInt();
-            ingredients.add(getIngredientById(number));
+            String ingr = getIngredientById(number);
+            if (!ingredients.contains(ingr)){
+                ingredients.add(ingr);
+            } else {
+                System.out.println("Ingredient is already exists, choose another");
+            }
+
+
             System.out.println("Press '0' to add one more ingredient, any another key to finish");
             number = scan.nextInt();
         } while(number == 0);
-        new BurgerController().saveBurger(burgerName,5,ingredients);
-        System.out.println("Burger"+burgerName+" just created");
+        try {
+            String result = new BurgerController().addBurgerToList(burgerName,getCurrentUser(),ingredients);
+            System.out.println("Burger: "+result+" just created!");
+        } catch (DataAlreadyExistsException | WrongDataSizeException | EmptyDataException | ContainsIllegalCharactersException e) {
+            System.out.println(e.getMessage());
+            createBurger();
+        }
 
     }
 
     private void buyBurger(){
-        String nameBurger = getNameBurgerById();
-        new BurgerController().deleteBurger(nameBurger);
+        BurgerController bc = new BurgerController();
+
+        try {
+            String nameBurger = getNameBurgerById();
+            String profitInfo = bc.orderBurgerByName(nameBurger, getCurrentUser());
+            bc.markOrderedBurger(nameBurger);
+            System.out.println("You bought "+nameBurger);
+            System.out.println(profitInfo);
+        } catch (EmptyDataException e) {
+            System.out.println(e.getMessage());
+
+        }
+
 
     }
 
     private void addIngredient(){
         IngredientController ic = new IngredientController();
+        showIngredients();
         String ingrName = askUserData("Ingredient name: ");
         double ingrPrice = askUserChoiceDouble("Ingredient price: ");
         int ingrAmount = askUserChoiceInt("Ingredient amount: ");
@@ -204,30 +267,42 @@ public class ConsoleInterface {
         }
     }
 
-    private String getNameBurgerById() {
-        int number;
+    private String getNameBurgerById() throws EmptyDataException {
         int i = 1;
-        Scanner scan = new Scanner(System.in);
         BurgerController co = new BurgerController();
 
-        List<String> list = co.getBurgersList();
-        for (String str: list) {
-            System.out.println(i+": "+str);
+        List<String> list = co.getAvailableBurgersList();
+        for (String text: list) {
+            System.out.println(i+": "+text);
             i++;
         }
-        number = scan.nextInt();
-        //String str =  list.get(number-1);
+        int number = askUserChoiceInt("Type burger number: ");
         return co.getBurgerString(number-1);
 
     }
 
+    private void viewTop(){
+        List<String> list = new BurgerController().getSortedList();
+        for (String text: list) {
+            System.out.println(text);
+        }
+
+    }
+
+    private void showBalance(){
+        System.out.println(new UserController().getBalance(getCurrentUser()));
+    }
+
+    private void setCommissions(){
+        int comm = askUserChoiceInt("Commissions for creators (1% - 50%): ");
+        new UserController().setCommissions(comm);
+    }
+
     private void chooseActionClientMenu(){
-        System.out.println("1 - AVAILABLE BURGERS | 2 - BUY BURGERS | 3 - CREATE BURGERS | 4 - VIEW TOP | 5 - VIEW BALANCE");
-        Scanner scan = new Scanner(System.in);
-        int number = scan.nextInt();
+        int number = askUserMenuChoice("1 - AVAILABLE BURGERS | 2 - BUY BURGERS | 3 - CREATE BURGERS | 4 - VIEW TOP | 5 - VIEW BALANCE");
         switch (number){
             case 1:
-                showBurgers();
+                showAvailableBurgers();
                 break;
             case 2:
                 buyBurger();
@@ -236,22 +311,22 @@ public class ConsoleInterface {
                 createBurger();
                 break;
             case 4:
-                System.out.println("feature is not available yet");
+                viewTop();
                 break;
             case 5:
-                System.out.println("feature is not available yet");
+                showBalance();
                 break;
             default:
-                System.out.println("-Not Allowed");
+                System.out.println("ERROR: Not Allowed");
                 break;
         }
     }
 
     private void chooseActionAdminMenu(){
-        int key = askUserChoice("1 - CREATED BURGERS | 2 - VIEW INGREDIENTS | 3 - ADD INGREDIENT | 4 - VIEW BALANCE");
+        int key = askUserMenuChoice("1 - CREATED BURGERS | 2 - VIEW INGREDIENTS | 3 - ADD INGREDIENT | 4 - VIEW BALANCE | 5 - SET UP COMMISSIONS");
         switch (key){
             case 1:
-                showBurgers();
+                showCreatedBurgers();
                 break;
             case 2:
                 showIngredients();
@@ -260,10 +335,13 @@ public class ConsoleInterface {
                 addIngredient();
                 break;
             case 4:
-                System.out.println("feature is not available yet");
+                showBalance();
+                break;
+            case 5:
+                setCommissions();
                 break;
             default:
-                System.out.println("-Not Allowed");
+                System.out.println("ERROR: Not allowed");
                 break;
         }
     }
