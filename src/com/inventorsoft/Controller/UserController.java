@@ -1,10 +1,11 @@
 package com.inventorsoft.Controller;
 
-import com.inventorsoft.data.DataStorage;
-import com.inventorsoft.Verification.DataVerification;
 import com.inventorsoft.Exception.*;
 import com.inventorsoft.Model.User;
-import com.inventorsoft.Verification.UserAuthentication;
+import com.inventorsoft.Service.DataVerification;
+import com.inventorsoft.Service.UserAuthentication;
+import com.inventorsoft.Service.DataFileStorage;
+import com.inventorsoft.Service.DataFileStorageUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,27 +13,23 @@ import java.util.List;
 
 public class UserController {
 
-    private UserAuthentication auth;
+    private UserAuthentication auth = new UserAuthentication();
     private List<User> users = new ArrayList<>();
     private DataVerification dv = new DataVerification();
-
+    private DataFileStorage<User> dataStorage = new DataFileStorageUser();
 
     private void updateData(){
-        users = DataStorage.getAllUsers();
-
-
+        users = dataStorage.getDataFromFileByList();
     }
+
     private void saveData(){
-        DataStorage.saveUserToFile2(users);
+        dataStorage.saveDataToFileByList(users);
     }
 
 
     public boolean login(String login, String password, boolean isAdmin) throws DataAlreadyExistsException, WrongDataSizeException, EmptyDataException, ContainsIllegalCharactersException, WrongLoginPasswordException {
-
         updateData();
-
         User user = new User(dv.verifyData(login),dv.verifyData(password),isAdmin);
-        auth = new UserAuthentication();
         return auth.isLoginSuccessful(user, users);
     }
 
@@ -46,6 +43,7 @@ public class UserController {
         } else {
             user.setCommissions(20);
         }
+
         Boolean isSuccess = new UserAuthentication().isRegistrationSuccessful(user,users);
         users.add(user);
         saveData();
@@ -72,7 +70,9 @@ public class UserController {
 
     public void setCompanyProfit(double companyProfit) {
         updateData();
-        users.stream().filter(User::isAdmin).forEach(o -> o.setMoney(o.getMoney()+companyProfit));
+        User user = users.stream().filter(User::isAdmin).findFirst().orElse(null);
+        double profit = user.getMoney() + companyProfit;
+        users.stream().filter(User::isAdmin).forEach(o -> o.setMoney(profit));
         saveData();
     }
 
@@ -91,7 +91,7 @@ public class UserController {
         } catch (NullPointerException e){
             System.out.println(e.getMessage());
         }
-
         saveData();
     }
+
 }

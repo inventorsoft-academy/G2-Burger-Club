@@ -1,7 +1,5 @@
 package com.inventorsoft.Controller;
 
-import com.inventorsoft.data.DataStorage;
-import com.inventorsoft.Verification.DataVerification;
 import com.inventorsoft.Exception.ContainsIllegalCharactersException;
 import com.inventorsoft.Exception.DataAlreadyExistsException;
 import com.inventorsoft.Exception.EmptyDataException;
@@ -9,6 +7,9 @@ import com.inventorsoft.Exception.WrongDataSizeException;
 import com.inventorsoft.Model.Burger;
 import com.inventorsoft.Model.Ingredient;
 import com.inventorsoft.Model.User;
+import com.inventorsoft.Service.DataFileStorage;
+import com.inventorsoft.Service.DataFileStorageBurger;
+import com.inventorsoft.Service.DataVerification;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,15 +22,16 @@ public class BurgerController {
 
     private List<Burger> burgers = new ArrayList<>();
     private DataVerification dv = new DataVerification();
+    private DataFileStorage<Burger> dataStorage = new DataFileStorageBurger();
     private IngredientController ic = new IngredientController();
     private UserController uc = new UserController();
 
     private void updateDataFromFile(){
-        burgers = new DataStorage().getBurgersFromFile();
+        burgers = dataStorage.getDataFromFileByList();
     }
 
     private void saveDataToFile(){
-        new DataStorage().saveBurgersToFile(burgers);
+        dataStorage.saveDataToFileByList(burgers);
     }
 
     public String addBurgerToList(String name, String author, List<String> ingredientList) throws DataAlreadyExistsException, WrongDataSizeException, EmptyDataException, ContainsIllegalCharactersException {
@@ -69,7 +71,7 @@ public class BurgerController {
                 String text = "";
                 isAvailable = true;
                 for (Ingredient ingredient: burger.getIngredient()) {
-                    text += " "+ingredient.getIngredientName()+"("+ingredient.getPrice()+")";
+                    text += " "+ingredient.getIngredientName()+"($"+ingredient.getPrice()+")";
                 }
                 list.add(burger.getName()+"($"+burger.getPrice()+") : "+text+" ["+burger.getCreator()+"]");
             }
@@ -119,15 +121,15 @@ public class BurgerController {
             throw new EmptyDataException("ERROR: Not enough money");
         }
 
-        double creatorProfit = (orderedBurger.getPrice() * customer.getCommissions())/100;
-        double companyProfit = (orderedBurger.getPrice() * (100 - customer.getCommissions()))/100;
+        double creatorProfitWithCommissions = (orderedBurger.getPrice() * customer.getCommissions())/100;
+        double companyProfitWithCommissions = (orderedBurger.getPrice() * (100 - customer.getCommissions()))/100;
 
         if (creator != null){
             uc.setCustomerLoss(customer,customer.getMoney()-orderedBurger.getPrice());
-            uc.setCreatorProfit(creator,creatorProfit);
-            uc.setCompanyProfit(companyProfit);
+            uc.setCreatorProfit(creator,creatorProfitWithCommissions);
+            uc.setCompanyProfit(companyProfitWithCommissions);
 
-            return "This burger has creator: "+creator.getLogin()+", his profit: $"+creatorProfit+" company profit: $"+companyProfit+" | current commissions: "+customer.getCommissions()+"%";
+            return "This burger has creator: "+creator.getLogin()+", his profit: $"+creatorProfitWithCommissions+" company profit: $"+companyProfitWithCommissions+" | current commissions: "+customer.getCommissions()+"%";
 
         } else {
             uc.setCustomerLoss(customer,customer.getMoney()-orderedBurger.getPrice());

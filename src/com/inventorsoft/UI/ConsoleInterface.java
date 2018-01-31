@@ -21,15 +21,25 @@ public class ConsoleInterface {
 
     public ConsoleInterface() {
 
+        start();
+    }
+
+    private void start(){
         int role = askUserChoiceBetweenTwoNumbers("1 - CUSTOMER | 2 - FAST FOOD company");
+        if (role == 0){
+            start();
+        }
         if (authorization(role)) {
-                showMainChooseMenu(role);
+            showMainChooseMenu(role);
         }
     }
 
     private boolean authorization(int role){
         boolean success = true;
         int num = askUserChoiceBetweenTwoNumbers("1 - LOGIN | 2 - REGISTRATION");
+        if (num == 0){
+            authorization(role);
+        }
         switch (num){
             case 1:
                 success = login(role);
@@ -38,7 +48,6 @@ public class ConsoleInterface {
                 success = registration(role);
                 break;
             default:
-                System.out.println("ERROR: Not Allowed");
                 break;
         }
         return success;
@@ -86,11 +95,12 @@ public class ConsoleInterface {
         try {
             text = scan.nextLine();
         } catch (Exception e){
-            System.out.println("Enter correct values!");
-            askUserData(askUserData(text));
+            System.out.println(e.getMessage()+"Enter correct valuess!");
+            askUserData(text);
         }
         return text;
     }
+
 
     private void showMainChooseMenu(int number){
     switch (number){
@@ -112,21 +122,23 @@ public class ConsoleInterface {
     }
 
     private int askUserChoiceBetweenTwoNumbers(String text){
-        int i = 1;
-
             Scanner scan = new Scanner(System.in);
             System.out.println(text);
             try {
-                i = scan.nextInt();
-            } catch (InputMismatchException e){
+                int i = scan.nextInt();
+                if (i == 1 || i == 2) {
+                    return i;
+                }
+                else {
+                    throw new WrongDataSizeException();
+                }
+            } catch (InputMismatchException | WrongDataSizeException e){
                 System.out.println("Enter correct value!");
                 askUserChoiceBetweenTwoNumbers(text);
+
             }
-            if (i == 2){
-                return 2;
-            } else {
-                return 1;
-            }
+                return 0;
+
     }
 
     private int askUserChoiceInt(String text){
@@ -150,7 +162,7 @@ public class ConsoleInterface {
             i = scan.nextInt();
         } catch (Exception e){
             System.out.println("Enter correct value!");
-            askUserChoiceInt(text);
+            askUserMenuChoice(text);
         }
         return i;
     }

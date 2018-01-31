@@ -1,9 +1,13 @@
 package com.inventorsoft.Controller;
 
-import com.inventorsoft.data.DataStorage;
-import com.inventorsoft.Verification.DataVerification;
-import com.inventorsoft.Exception.*;
+import com.inventorsoft.Exception.ContainsIllegalCharactersException;
+import com.inventorsoft.Exception.DataAlreadyExistsException;
+import com.inventorsoft.Exception.EmptyDataException;
+import com.inventorsoft.Exception.WrongDataSizeException;
 import com.inventorsoft.Model.Ingredient;
+import com.inventorsoft.Service.DataFileStorage;
+import com.inventorsoft.Service.DataFileStorageIngredient;
+import com.inventorsoft.Service.DataVerification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +16,14 @@ public class IngredientController {
 
     private List<Ingredient> ingredients = new ArrayList<>();
     private DataVerification dv = new DataVerification();
+    private DataFileStorage<Ingredient> dataStorage = new DataFileStorageIngredient();
 
     private void updateData(){
-        ingredients = new DataStorage().getIngredientsFromFile();
+        ingredients = dataStorage.getDataFromFileByList();
     }
 
     private void saveData(){
-        new DataStorage().saveIngredientsToFile(ingredients);
+        dataStorage.saveDataToFileByList(ingredients);
     }
 
 
@@ -36,9 +41,7 @@ public class IngredientController {
         } else {
             ingredients.add(ingredient);
         }
-
         saveData();
-
     }
 
     public List<String> getIngredients(){
