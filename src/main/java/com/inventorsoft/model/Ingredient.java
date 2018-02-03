@@ -1,4 +1,4 @@
-package com.inventorsoft.Model;
+package com.inventorsoft.model;
 
 public class Ingredient {
 

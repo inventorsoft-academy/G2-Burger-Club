@@ -1,13 +1,13 @@
-package com.inventorsoft.Controller;
+package com.inventorsoft.controller;
 
-import com.inventorsoft.Exception.ContainsIllegalCharactersException;
-import com.inventorsoft.Exception.DataAlreadyExistsException;
-import com.inventorsoft.Exception.EmptyDataException;
-import com.inventorsoft.Exception.WrongDataSizeException;
-import com.inventorsoft.Model.Ingredient;
-import com.inventorsoft.Service.DataFileStorage;
-import com.inventorsoft.Service.DataFileStorageIngredient;
-import com.inventorsoft.Service.DataVerification;
+import com.inventorsoft.exception.ContainsIllegalCharactersException;
+import com.inventorsoft.exception.DataAlreadyExistsException;
+import com.inventorsoft.exception.EmptyDataException;
+import com.inventorsoft.exception.WrongDataSizeException;
+import com.inventorsoft.model.Ingredient;
+import com.inventorsoft.service.DataFileStorage;
+import com.inventorsoft.service.DataFileStorageIngredient;
+import com.inventorsoft.service.DataVerification;
 
 import java.util.ArrayList;
 import java.util.List;

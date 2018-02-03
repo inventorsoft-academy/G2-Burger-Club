@@ -1,11 +1,11 @@
-package com.inventorsoft.Service;
+package com.inventorsoft.service;
 
-import com.inventorsoft.Exception.ContainsIllegalCharactersException;
-import com.inventorsoft.Exception.DataAlreadyExistsException;
-import com.inventorsoft.Exception.EmptyDataException;
-import com.inventorsoft.Exception.WrongDataSizeException;
-import com.inventorsoft.Model.Burger;
-import com.inventorsoft.Model.Ingredient;
+import com.inventorsoft.exception.ContainsIllegalCharactersException;
+import com.inventorsoft.exception.DataAlreadyExistsException;
+import com.inventorsoft.exception.EmptyDataException;
+import com.inventorsoft.exception.WrongDataSizeException;
+import com.inventorsoft.model.Burger;
+import com.inventorsoft.model.Ingredient;
 
 import java.util.List;
 

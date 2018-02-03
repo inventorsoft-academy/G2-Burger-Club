@@ -1,9 +1,7 @@
-package com.inventorsoft.Exception;
+package com.inventorsoft.exception;
 
-/**
- * Created by Sergey on 27.01.2018.
- */
 public class WrongLoginPasswordException extends Exception {
+
     public WrongLoginPasswordException() {
     }
 

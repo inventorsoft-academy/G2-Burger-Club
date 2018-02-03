@@ -1,6 +1,6 @@
 package com.inventorsoft;
 
-import com.inventorsoft.UI.ConsoleInterface;
+import com.inventorsoft.ui.ConsoleInterface;
 
 public class Main {
 

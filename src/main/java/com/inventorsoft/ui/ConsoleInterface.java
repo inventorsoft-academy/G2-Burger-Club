@@ -1,9 +1,9 @@
-package com.inventorsoft.UI;
+package com.inventorsoft.ui;
 
-import com.inventorsoft.Controller.BurgerController;
-import com.inventorsoft.Controller.IngredientController;
-import com.inventorsoft.Controller.UserController;
-import com.inventorsoft.Exception.*;
+import com.inventorsoft.controller.BurgerController;
+import com.inventorsoft.controller.IngredientController;
+import com.inventorsoft.controller.UserController;
+import com.inventorsoft.exception.*;
 
 import java.util.*;
 

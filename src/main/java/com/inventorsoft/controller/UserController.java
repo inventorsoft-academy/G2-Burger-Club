@@ -1,11 +1,11 @@
-package com.inventorsoft.Controller;
+package com.inventorsoft.controller;
 
-import com.inventorsoft.Exception.*;
-import com.inventorsoft.Model.User;
-import com.inventorsoft.Service.DataVerification;
-import com.inventorsoft.Service.UserAuthentication;
-import com.inventorsoft.Service.DataFileStorage;
-import com.inventorsoft.Service.DataFileStorageUser;
+import com.inventorsoft.exception.*;
+import com.inventorsoft.model.User;
+import com.inventorsoft.service.DataVerification;
+import com.inventorsoft.service.UserAuthentication;
+import com.inventorsoft.service.DataFileStorage;
+import com.inventorsoft.service.DataFileStorageUser;
 
 import java.util.ArrayList;
 import java.util.List;

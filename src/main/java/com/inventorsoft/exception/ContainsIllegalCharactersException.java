@@ -1,8 +1,5 @@
-package com.inventorsoft.Exception;
+package com.inventorsoft.exception;
 
-/**
- * Created by Sergey on 27.01.2018.
- */
 public class ContainsIllegalCharactersException extends Exception {
     public ContainsIllegalCharactersException() {
     }

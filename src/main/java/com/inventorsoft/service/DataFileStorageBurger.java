@@ -1,8 +1,8 @@
-package com.inventorsoft.Service;
+package com.inventorsoft.service;
 
-import com.inventorsoft.Controller.IngredientController;
-import com.inventorsoft.Model.Burger;
-import com.inventorsoft.Model.Ingredient;
+import com.inventorsoft.controller.IngredientController;
+import com.inventorsoft.model.Burger;
+import com.inventorsoft.model.Ingredient;
 
 import java.io.*;
 import java.util.ArrayList;

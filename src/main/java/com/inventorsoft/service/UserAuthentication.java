@@ -1,8 +1,8 @@
-package com.inventorsoft.Service;
+package com.inventorsoft.service;
 
-import com.inventorsoft.Exception.DataAlreadyExistsException;
-import com.inventorsoft.Exception.WrongLoginPasswordException;
-import com.inventorsoft.Model.User;
+import com.inventorsoft.exception.DataAlreadyExistsException;
+import com.inventorsoft.exception.WrongLoginPasswordException;
+import com.inventorsoft.model.User;
 
 import java.util.List;
 

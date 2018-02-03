@@ -1,6 +1,6 @@
-package com.inventorsoft.Service;
+package com.inventorsoft.service;
 
-import com.inventorsoft.Model.User;
+import com.inventorsoft.model.User;
 
 import java.io.*;
 import java.util.ArrayList;

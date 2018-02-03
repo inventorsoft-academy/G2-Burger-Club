@@ -1,10 +1,10 @@
-package com.inventorsoft.Service;
+package com.inventorsoft.service;
 
 import java.util.List;
 
 public interface DataFileStorage<T> {
 
-    String FILE_PATH = "src/com/inventorsoft/data";
+    String FILE_PATH = "src/main/resources/data";
     String FILE_FORMAT = ".txt";
 
     List<T> getDataFromFileByList();
