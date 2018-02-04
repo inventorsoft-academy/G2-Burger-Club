@@ -1,1 +1,1 @@
-trueadmin,qwerty,70.68,25,true;Sergey,qwerty,48.44999999999998,25,false;andrew,123456,8.4,25,false;shameless,123456,4.0,25,false;admin,qwerty,70.68,25,true;
+trueadmin,qwerty,77.08000000000001,45,true;Sergey,qwerty,42.04999999999998,45,false;andrew,123456,8.4,45,false;shameless,123456,4.0,45,false;admin,qwerty,77.08000000000001,45,true;

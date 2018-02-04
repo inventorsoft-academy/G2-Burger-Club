@@ -1,4 +1,4 @@
-package com.inventorsoft.service;
+package com.inventorsoft.dao;
 
 import com.inventorsoft.model.Ingredient;
 

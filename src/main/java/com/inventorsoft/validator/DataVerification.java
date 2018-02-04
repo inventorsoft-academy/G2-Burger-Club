@@ -1,4 +1,4 @@
-package com.inventorsoft.service;
+package com.inventorsoft.validator;
 
 import com.inventorsoft.exception.ContainsIllegalCharactersException;
 import com.inventorsoft.exception.DataAlreadyExistsException;

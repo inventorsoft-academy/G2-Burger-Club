@@ -1,8 +1,8 @@
-package com.inventorsoft.service;
+package com.inventorsoft.dao;
 
-import com.inventorsoft.controller.IngredientController;
 import com.inventorsoft.model.Burger;
 import com.inventorsoft.model.Ingredient;
+import com.inventorsoft.service.IngredientService;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class DataFileStorageBurger implements DataFileStorage<Burger> {
     public List<Burger> getDataFromFileByList() {
         File file = new File(FILE_PATH,FILE_NAME+FILE_FORMAT);
         List<Burger> burgers = new ArrayList<>();
-        IngredientController ic = new IngredientController();
+        IngredientService ic = new IngredientService();
         try {
             Scanner read = new Scanner(file);
             read.useDelimiter(",|;");
