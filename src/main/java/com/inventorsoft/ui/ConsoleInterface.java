@@ -1,6 +1,8 @@
 package com.inventorsoft.ui;
 
 import com.inventorsoft.exception.*;
+import com.inventorsoft.model.Burger;
+import com.inventorsoft.model.Ingredient;
 import com.inventorsoft.service.BurgerService;
 import com.inventorsoft.service.IngredientService;
 import com.inventorsoft.service.UserService;
@@ -16,7 +18,6 @@ import java.util.logging.Logger;
 public class ConsoleInterface implements CommandLineRunner{
 
     private static final Logger log = Logger.getLogger(ConsoleInterface.class.getName());
-
 
     private UserService userService;
     private BurgerService burgerService;
@@ -34,11 +35,11 @@ public class ConsoleInterface implements CommandLineRunner{
 
     private String currentUser;
 
-    public String getCurrentUser() {
+    private String getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(String currentUser) {
+    private void setCurrentUser(String currentUser) {
         this.currentUser = currentUser;
     }
 
@@ -53,7 +54,7 @@ public class ConsoleInterface implements CommandLineRunner{
             start();
         }
         if (authorization(role)) {
-            log.log(Level.INFO, "role: "+role);
+            log.log(Level.INFO, "authorization user role: "+role);
             showMainChooseMenu(role);
         }
     }
@@ -208,24 +209,33 @@ public class ConsoleInterface implements CommandLineRunner{
     }
 
     private void showAvailableBurgers(){
-        try {
-            log.log(Level.INFO, "showAvailableBurgers method");
-            List<String> list = burgerService.getAvailableBurgersList();
-            for (String text: list) {
-                System.out.println(text);
+
+            for (Burger burger: burgerService.getBurgersList()) {
+                if (burger.isAvailable()) {
+                    String text = "";
+                    for (Ingredient ingredient : burger.getIngredient()) {
+                        text += " " + ingredient.getIngredientName() + "($" + ingredient.getPrice() + ")";
+                    }
+                    System.out.println(burger.getName() + "($" + burger.getPrice() + ") : " + text + " [" + burger.getCreator() + "]");
+                }
             }
-        } catch (EmptyDataException e) {
-            System.out.println(e.getMessage());
-        }
 
     }
 
     private void showCreatedBurgers(){
-        List<String> list = burgerService.getFullBurgersListForCustomer();
-        for (String text: list) {
 
-            System.out.println(text);
+        for (Burger burger:burgerService.getBurgersList()) {
+            String text = "";
+            for (Ingredient ingredient : burger.getIngredient()) {
+                text += " " + ingredient.getIngredientName() + "($" + ingredient.getPrice() + ")";
+            }
+            System.out.println(burger.getName() + "($" + burger.getPrice() + ") : " + text + " [" + burger.getCreator() + "]");
         }
+//        List<String> list = burgerService.getFullBurgersListForCustomer();
+//        for (String text: list) {
+//
+//            System.out.println(text);
+//        }
     }
 
     private void showIngredients(){
@@ -262,13 +272,13 @@ public class ConsoleInterface implements CommandLineRunner{
                 System.out.println("Ingredient is already exists, choose another");
             }
 
-
             System.out.println("Press '0' to add one more ingredient, any another key to finish");
             number = scan.nextInt();
         } while(number == 0);
+
         try {
-            String result = burgerService.addBurgerToList(burgerName,getCurrentUser(),ingredients);
-            System.out.println("Burger: "+result+" just created!");
+            Burger createdBurger = burgerService.addBurgerToList(burgerName,getCurrentUser(),ingredients);
+            System.out.println("Burger: "+createdBurger.getName()+" just created!");
         } catch (DataAlreadyExistsException | WrongDataSizeException | EmptyDataException | ContainsIllegalCharactersException e) {
             System.out.println(e.getMessage());
             createBurger();
@@ -276,29 +286,14 @@ public class ConsoleInterface implements CommandLineRunner{
 
     }
 
-    private void buyBurger(){
-        //BurgerService bc = new BurgerService();
-
-        try {
-            String nameBurger = getNameBurgerById();
-            String profitInfo = burgerService.orderBurgerByName(nameBurger, getCurrentUser());
-            burgerService.markOrderedBurger(nameBurger);
-            System.out.println("You bought "+nameBurger);
-            System.out.println(profitInfo);
-        } catch (EmptyDataException e) {
-            System.out.println(e.getMessage());
-
-        }
-
-
-    }
 
     private void addIngredient(){
-        //IngredientService ic = new IngredientService();
         showIngredients();
+
         String ingrName = askUserData("Ingredient name: ");
         double ingrPrice = askUserChoiceDouble("Ingredient price: ");
         int ingrAmount = askUserChoiceInt("Ingredient amount: ");
+
         try {
             ingredientService.addIngredient(ingrName,ingrPrice,ingrAmount);
         } catch (WrongDataSizeException | EmptyDataException | ContainsIllegalCharactersException | IllegalArgumentException | DataAlreadyExistsException e) {
@@ -307,35 +302,60 @@ public class ConsoleInterface implements CommandLineRunner{
         }
     }
 
-    private String getNameBurgerById() throws EmptyDataException {
-        int i = 1;
-        //BurgerService co = new BurgerService();
+    private void buyBurger(){
 
-        List<String> list = burgerService.getAvailableBurgersList();
-        for (String text: list) {
-            System.out.println(i+": "+text);
+        try {
+            Burger burger = chooseBurgerFromList();
+            burgerService.orderBurgerByName(burger, getCurrentUser());
+
+            System.out.println("You bought burger: "+burger.getName()+" for ($)"+burger.getPrice());
+        } catch (EmptyDataException e) {
+            log.log(Level.SEVERE, "exception: "+e);
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private Burger chooseBurgerFromList() throws EmptyDataException {
+        int i = 1;
+        List<Burger> burgerList = burgerService.getBurgersList();
+
+        for (Burger burger: burgerList) {
+            if (burger.isAvailable()){
+                System.out.println(i+": "+burger.getName()+"($"+burger.getPrice()+")");
+            }
             i++;
         }
         int number = askUserChoiceInt("Type burger number: ");
-        return burgerService.getBurgerString(number-1);
+        log.info("burger choice: "+burgerList.get(number-1).getName());
+        return burgerList.get(number-1);
 
     }
 
     private void viewTop(){
-        List<String> list = burgerService.getSortedList();
-        for (String text: list) {
-            System.out.println(text);
+        List<Burger> list = burgerService.getSortedList();
+
+        for (Burger burger: list) {
+            if (burger.isAvailable()) {
+                System.out.println(burger.getOrdersNumber()+" - "+burger.getName() + "($" + burger.getPrice() + ") [" + burger.getCreator() + "]");
+            }
         }
 
     }
 
     private void showBalance(){
-        System.out.println(userService.getBalance(getCurrentUser()));
+        System.out.println("Balance: $"+userService.getBalanceByUserName(getCurrentUser())
+                +" commissions for creators: "+userService.getCommissionsByUserName(getCurrentUser()));
     }
 
     private void setCommissions(){
         int comm = askUserChoiceInt("Commissions for creators (1% - 50%): ");
-        userService.setCommissions(comm);
+        try {
+            userService.setCommissions(comm);
+        } catch (WrongDataSizeException e) {
+            log.log(Level.SEVERE, "exception: "+e);
+            System.out.println(e.getMessage());
+            setCommissions();
+        }
     }
 
     private void chooseActionClientMenu(){

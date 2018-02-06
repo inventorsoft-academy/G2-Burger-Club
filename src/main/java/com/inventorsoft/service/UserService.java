@@ -1,43 +1,52 @@
 package com.inventorsoft.service;
 
 import com.inventorsoft.dao.DataFileStorage;
-import com.inventorsoft.dao.DataFileStorageUser;
 import com.inventorsoft.exception.*;
 import com.inventorsoft.model.User;
-import com.inventorsoft.validator.DataVerification;
-import com.inventorsoft.validator.UserAuthentication;
+import com.inventorsoft.ui.ConsoleInterface;
+import com.inventorsoft.validator.UserValidation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class UserService {
 
-    private List<User> users = new ArrayList<>();
-    private DataFileStorage<User> dataStorage = new DataFileStorageUser();
-    private UserAuthentication auth = new UserAuthentication();
+    private static final Logger log = Logger.getLogger(ConsoleInterface.class.getName());
 
-    private DataVerification dv = new DataVerification();
+    private List<User> users;
+    private DataFileStorage<User> dataStorage;
+    private UserValidation userValidation;
 
+    @Autowired
+    public UserService(DataFileStorage<User> dataStorage, UserValidation userValidation) {
+        this.dataStorage = dataStorage;
+        this.userValidation = userValidation;
+    }
+    @PostConstruct
     private void updateData(){
         users = dataStorage.getDataFromFileByList();
     }
 
+    @PreDestroy
     private void saveData(){
         dataStorage.saveDataToFileByList(users);
     }
 
-    public boolean login(String login, String password, boolean isAdmin) throws DataAlreadyExistsException, WrongDataSizeException, EmptyDataException, ContainsIllegalCharactersException, WrongLoginPasswordException {
+    public void login(String login, String password, boolean isAdmin) throws DataAlreadyExistsException, WrongDataSizeException, EmptyDataException, ContainsIllegalCharactersException, WrongLoginPasswordException {
         updateData();
-        User user = new User(dv.verifyData(login),dv.verifyData(password),isAdmin);
-        return auth.isLoginSuccessful(user, users);
+        User user = new User(userValidation.verifyUserData(login),userValidation.verifyUserData(password),isAdmin);
+        userValidation.isLoginSuccessful(user, users);
     }
 
     public boolean registration(String login, String password, boolean isAdmin) throws WrongDataSizeException, EmptyDataException, ContainsIllegalCharactersException, DataAlreadyExistsException {
         updateData();
 
-        User user = new User(dv.verifyData(login),dv.verifyData(password),isAdmin);
+        User user = new User(userValidation.verifyUserData(login),userValidation.verifyUserData(password),isAdmin);
         user.setMoney(10);
         if (users.get(0) != null){
             user.setCommissions(users.get(0).getCommissions());
@@ -45,32 +54,46 @@ public class UserService {
             user.setCommissions(20);
         }
 
-        Boolean isSuccess = new UserAuthentication().isRegistrationSuccessful(user,users);
+        Boolean isSuccess = new UserValidation().isRegistrationSuccessful(user,users);
         users.add(user);
         saveData();
         return isSuccess;
     }
 
+    public List<User> getUsersList() {
+
+        log.info("burgers(size): "+users.size());
+        return users;
+    }
+
+    public User getUsersById(int id){
+        return users.get(id-1);
+    }
+
     public User getUserByName(String name){
-        updateData();
         return users.stream().filter(o -> o.getLogin().equals(name)).findFirst().orElse(null);
     }
 
-    public String getBalance(String name){
-        updateData();
+    public double getBalanceByUserName(String name){
         User user = getUserByName(name);
-        return "BALANCE: $"+user.getMoney()+" Commissions for creators: "+user.getCommissions()+"%";
+        double balance = user.getMoney();
+        return Math.floor(balance * 100)/100;
     }
 
-    public void setCommissions(int amount){
-        updateData();
+    public double getCommissionsByUserName(String name){
+        User user = getUserByName(name);
+        double commission = user.getCommissions();
+        return Math.floor(commission * 100)/100;
+    }
+
+    public void setCommissions(int amount) throws WrongDataSizeException {
+        userValidation.validateCommissions(amount);
         users.forEach(o -> o.setCommissions(amount));
         saveData();
     }
 
 
     public void setCompanyProfit(double companyProfit) {
-        updateData();
         User user = users.stream().filter(User::isAdmin).findFirst().orElse(null);
         double profit = user.getMoney() + companyProfit;
         users.stream().filter(User::isAdmin).forEach(o -> o.setMoney(profit));
@@ -79,14 +102,12 @@ public class UserService {
 
 
     public void setCustomerLoss(User customer, double loss) {
-        updateData();
         users.stream().filter(o -> o.getLogin().equals(customer.getLogin())).forEach(o -> o.setMoney(loss));
         saveData();
 
     }
 
     public void setCreatorProfit(User creator, double creatorProfit) {
-        updateData();
         try {
             users.stream().filter(o -> o.getLogin().equals(creator.getLogin())).forEach(o -> o.setMoney(o.getMoney()+creatorProfit));
         } catch (NullPointerException e){

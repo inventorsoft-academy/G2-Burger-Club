@@ -3,6 +3,8 @@ package com.inventorsoft.dao;
 import com.inventorsoft.model.Burger;
 import com.inventorsoft.model.Ingredient;
 import com.inventorsoft.service.IngredientService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -10,15 +12,22 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+@Component
 public class DataFileStorageBurger implements DataFileStorage<Burger> {
 
     private final static String FILE_NAME = "/burgers";
+
+    private IngredientService ic;
+
+    @Autowired
+    public DataFileStorageBurger(IngredientService ic) {
+        this.ic = ic;
+    }
 
     @Override
     public List<Burger> getDataFromFileByList() {
         File file = new File(FILE_PATH,FILE_NAME+FILE_FORMAT);
         List<Burger> burgers = new ArrayList<>();
-        IngredientService ic = new IngredientService();
         try {
             Scanner read = new Scanner(file);
             read.useDelimiter(",|;");

@@ -1,12 +1,14 @@
 package com.inventorsoft.dao;
 
 import com.inventorsoft.model.Ingredient;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+@Component
 public class DataFileStorageIngredient implements DataFileStorage<Ingredient> {
 
     private final static String FILE_NAME = "/ingredients";

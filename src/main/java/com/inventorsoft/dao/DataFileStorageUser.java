@@ -1,12 +1,14 @@
 package com.inventorsoft.dao;
 
 import com.inventorsoft.model.User;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+@Component
 public class DataFileStorageUser implements DataFileStorage<User> {
 
     private final static String FILE_NAME = "/users";

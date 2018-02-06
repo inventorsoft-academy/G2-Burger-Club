@@ -1,15 +1,17 @@
 package com.inventorsoft.service;
 
 import com.inventorsoft.dao.DataFileStorage;
-import com.inventorsoft.dao.DataFileStorageIngredient;
 import com.inventorsoft.exception.ContainsIllegalCharactersException;
 import com.inventorsoft.exception.DataAlreadyExistsException;
 import com.inventorsoft.exception.EmptyDataException;
 import com.inventorsoft.exception.WrongDataSizeException;
 import com.inventorsoft.model.Ingredient;
-import com.inventorsoft.validator.DataVerification;
+import com.inventorsoft.validator.IngredientValidation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,13 +19,22 @@ import java.util.List;
 public class IngredientService {
 
     private List<Ingredient> ingredients = new ArrayList<>();
-    private DataVerification dv = new DataVerification();
-    private DataFileStorage<Ingredient> dataStorage = new DataFileStorageIngredient();
 
+    private IngredientValidation ingredientValidation;
+    private DataFileStorage<Ingredient> dataStorage;
+
+    @Autowired
+    public IngredientService(IngredientValidation ingredientValidation, DataFileStorage<Ingredient> dataStorage) {
+        this.ingredientValidation = ingredientValidation;
+        this.dataStorage = dataStorage;
+    }
+
+    @PostConstruct
     private void updateData(){
         ingredients = dataStorage.getDataFromFileByList();
     }
 
+    @PreDestroy
     private void saveData(){
         dataStorage.saveDataToFileByList(ingredients);
     }
@@ -32,9 +43,9 @@ public class IngredientService {
     public void addIngredient(String ingrName, double ingrPrice, int ingrAmount) throws WrongDataSizeException, EmptyDataException, ContainsIllegalCharactersException, DataAlreadyExistsException {
         updateData();
 
-        Ingredient ingredient = new Ingredient(dv.verifyData(ingrName),ingrPrice,ingrAmount);
+        Ingredient ingredient = new Ingredient(ingredientValidation.verifyIngredientData(ingrName),ingrPrice,ingrAmount);
 
-        if (dv.matchCheck(ingredient,ingredients)){
+        if (ingredientValidation.isIngredientAlreadyExists(ingredient,ingredients)){
             ingredients.stream()
                     .filter(o -> o.getIngredientName().equals(ingredient.getIngredientName()))
                     .peek(o -> o.setPrice(ingrPrice))
